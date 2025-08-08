@@ -1,3 +1,5 @@
+![Sample](assets/sample.jpeg)
+
 # RetroMockup.exe
 
 Generate a retro 90s-style software box and CD-ROM mockup from a simple company name. Built with plain HTML, TailwindCSS (CDN), and vanilla JavaScript.
