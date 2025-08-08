@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RetroMockup.exe</title>
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+    <link rel="icon" href="assets/favicon.ico">
+    <link rel="manifest" href="assets/site.webmanifest">
+    <meta name="theme-color" content="#ffffff">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      html, body { height: 100%; }
+      body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+      .prompt-shell:focus-within { box-shadow: 0 0 0 1px rgb(209 213 219); }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="border-b border-gray-200 bg-white/70 backdrop-blur sticky top-0 z-10">
+      <div class="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <img src="assets/apple-touch-icon.png" alt="App logo" class="w-7 h-7 rounded-md object-cover" />
+          <h1 class="text-sm font-semibold tracking-tight">RetroMockup.exe</h1>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="toggle-key" class="text-xs text-gray-600 hover:text-gray-900 inline-flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path d="M11.49 3.17a4.5 4.5 0 0 1 5.34 5.34l-6.69 6.69a3 3 0 0 1-1.7.85l-3.18.4a.75.75 0 0 1-.83-.83l.4-3.18a3 3 0 0 1 .85-1.71l6.7-6.7Zm1.41 1.41-6.69 6.7a1.5 1.5 0 0 0-.43.86l-.23 1.78 1.78-.23a1.5 1.5 0 0 0 .86-.43l6.7-6.69a3 3 0 1 0-2-2Z"/></svg>
+            API Key
+          </button>
+          <button id="toggle-prompt" class="text-xs text-gray-600 hover:text-gray-900 inline-flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+              <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h8.5a.5.5 0 00.5-.5V15h3.5a.5.5 0 00.5-.5V5a2 2 0 00-2-2H4zm11 10h-2V7h2v6zM5 7h6v6H5V7z" />
+            </svg>
+            Prompt
+          </button>
+          <a href="https://x.com/eswordert" target="_blank" rel="noopener" class="text-xs text-gray-500 hover:text-gray-900">@eswordert</a>
+        </div>
+      </div>
+      <!-- API Key Modal (hidden by default) -->
+      <div id="key-modal" class="fixed inset-0 z-50 hidden">
+        <div class="relative mx-auto max-w-md w-full mt-24">
+          <div class="mx-4">
+            <div class="rounded-xl bg-white shadow-lg border border-gray-200">
+              <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+                <h2 class="text-sm font-semibold">OpenAI API Key</h2>
+                <button id="key-close" class="p-1 text-gray-500 hover:text-gray-900" aria-label="Close">
+                  ✕
+                </button>
+              </div>
+              <div class="p-4 space-y-3">
+                <input id="api-key" type="password" placeholder="sk-..." class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300" />
+                <div id="key-status" class="text-xs text-gray-600"></div>
+              </div>
+              <div class="px-4 py-3 border-t border-gray-200 flex items-center justify-between">
+                <div class="text-[11px] text-gray-500 flex items-center gap-2">
+                  <span>Stored locally in this browser.</span>
+                  <a href="https://platform.openai.com/settings/organization/api-keys" target="_blank" class="underline text-gray-600 hover:text-gray-900">Get key</a>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button id="clear-key" class="px-3 py-2 rounded-md border border-gray-300 text-sm">Clear</button>
+                  <button id="save-key" class="px-3 py-2 rounded-md bg-gray-900 text-white text-sm">Save</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prompt Modal (hidden by default) -->
+      <div id="prompt-modal" class="fixed inset-0 z-50 hidden">
+        <div class="relative mx-auto max-w-2xl w-full mt-20">
+          <div class="mx-4">
+            <div class="rounded-xl bg-white shadow-lg border border-gray-200 overflow-hidden">
+              <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+                <h2 class="text-sm font-semibold">System Prompt</h2>
+                <div class="flex items-center gap-2">
+                  <button id="prompt-copy" class="px-2 py-1 text-xs rounded border border-gray-300 hover:bg-gray-50">Copy</button>
+                  <button id="prompt-close" class="p-1 text-gray-500 hover:text-gray-900" aria-label="Close">✕</button>
+                </div>
+              </div>
+              <div class="p-4">
+                <div class="mb-3 text-xs bg-blue-50 border border-blue-200 text-blue-800 rounded-md p-3">
+                  This prompt expects a <span class="font-semibold">company name</span> as the text input. Enter just the company name in the message box; a tagline and logo hint are inferred automatically.
+                </div>
+                <pre id="prompt-text" class="text-xs leading-5 whitespace-pre-wrap bg-gray-50 border border-gray-200 rounded-lg p-3 max-h-[60vh] overflow-auto"></pre>
+                <div id="prompt-status" class="mt-2 text-[11px] text-gray-500"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Chat area -->
+    <main class="flex-1">
+      <div id="chat" class="max-w-3xl mx-auto px-4 py-6 space-y-6">
+        <!-- Intro message -->
+        <div class="flex items-start gap-3">
+          <div class="shrink-0 w-8 h-8 rounded-full bg-orange-200 border border-orange-300"></div>
+          <div class="bg-white border border-gray-200 rounded-2xl px-4 py-3 shadow-sm w-full">
+            <p class="text-sm text-gray-800">Type a company name (e.g., "OpenAI").</p>
+            <p class="text-xs text-gray-500 mt-2">Your API key is stored locally in this browser only. You will lose the chat history if you leave or refresh the page.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Prompt input -->
+    <div class="sticky bottom-0 bg-gradient-to-t from-gray-50 via-gray-50/90 to-gray-50/0 pt-4 pb-6">
+      <div class="max-w-3xl mx-auto px-4">
+        <form id="prompt-form" class="prompt-shell border border-gray-300 bg-white rounded-2xl shadow-sm p-2 flex items-center gap-2">
+          <textarea id="prompt-input" rows="1" placeholder="Type a company name and press Enter..." class="flex-1 resize-none outline-none text-sm px-3 py-2 leading-6 max-h-48"></textarea>
+
+          
+
+          <button id="send-btn" type="submit" aria-label="Send" class="inline-flex items-center justify-center rounded-xl bg-gray-900 text-white px-3 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+            <!-- Paper airplane (send) icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M22 2 11 13"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M22 2 15 22l-4-9-9-4 20-7z"/>
+            </svg>
+          </button>
+        </form>
+        <p class="text-[11px] text-gray-500 mt-2">By using this demo, you agree to OpenAI terms. Images are generated via the OpenAI Images API.</p>
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
