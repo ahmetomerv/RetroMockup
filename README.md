@@ -18,8 +18,8 @@ Generate a retro 90s-style software box and CD-ROM mockup from a simple company 
 ## Quick Start (local)
 1. Clone the repo:
    ```bash
-   git clone https://github.com/<your-username>/retro-product.git
-   cd retro-product
+   git clone https://github.com/ahmetomerv/RetroMockup.git
+   cd RetroMockup
    ```
 2. Open the `index.html` file
 3. Open the app, click “API Key”, paste your OpenAI key, Save.
