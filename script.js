@@ -212,6 +212,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const promptCopy = document.getElementById("prompt-copy");
   const promptText = document.getElementById("prompt-text");
   const promptStatus = document.getElementById("prompt-status");
+  const toggleSample = document.getElementById("toggle-sample");
+  const sampleModal = document.getElementById("sample-modal");
+  const sampleClose = document.getElementById("sample-close");
   // no attachment elements
 
   // Load API key from localStorage
@@ -257,6 +260,19 @@ document.addEventListener("DOMContentLoaded", () => {
       promptStatus.textContent = "Copy failed";
       setTimeout(() => (promptStatus.textContent = ""), 1500);
     }
+  });
+
+  // Sample modal
+  function openSampleModal() {
+    sampleModal.classList.remove("hidden");
+  }
+  function closeSampleModal() {
+    sampleModal.classList.add("hidden");
+  }
+  toggleSample.addEventListener("click", openSampleModal);
+  sampleClose.addEventListener("click", closeSampleModal);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeSampleModal();
   });
 
   saveKeyBtn.addEventListener("click", () => {
